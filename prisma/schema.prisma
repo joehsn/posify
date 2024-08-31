@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id         String     @id @default(uuid())
+  user_image      String?    @db.VarChar(255)
+  user_role       UserRole   @default(cashier)
+  user_name       String     @db.VarChar(255)
+  user_gender     UserGender
+  user_username   String     @unique @db.VarChar(50)
+  user_email      String     @unique @db.VarChar(100)
+  user_phone      String     @unique @db.VarChar(13)
+  user_address    String     @db.VarChar(255)
+  user_birth_date DateTime   @db.Date
+  user_password   String     @db.VarChar(255)
+  created_at      DateTime?  @default(now()) @db.DateTime(0)
+  updated_at      DateTime?  @default(now()) @db.DateTime(0)
+  sales           Sale[]
+}
+
+enum UserRole {
+  admin
+  manager
+  cashier
+}
+
+enum UserGender {
+  male
+  female
+}
+
+model Category {
+  category_id   String    @id @default(uuid())
+  category_name String    @unique @db.VarChar(255)
+  created_at    DateTime? @default(now()) @db.DateTime(0)
+  updated_at    DateTime? @default(now()) @db.DateTime(0)
+  products      Product[]
+}
+
+model Product {
+  product_id       String    @id @default(uuid())
+  product_name     String    @db.VarChar(255)
+  product_price    Int       @db.Int
+  product_quantity Int       @db.Int
+  product_image    String?   @db.VarChar(255)
+  product_desc     String?   @db.VarChar(255)
+  created_at       DateTime? @default(now()) @db.DateTime(0)
+  updated_at       DateTime? @default(now()) @db.DateTime(0)
+  category         Category  @relation(fields: [category_id], references: [category_id], onDelete: Cascade)
+  category_id      String
+}
+
+model Sale {
+  sale_id        String     @id @default(uuid())
+  sale_date      DateTime   @db.Date
+  sale_total     Int        @db.Int
+  customer_name  String     @db.VarChar(255)
+  customer_phone String     @db.VarChar(13)
+  created_at     DateTime?  @default(now()) @db.DateTime(0)
+  updated_at     DateTime?  @default(now()) @db.DateTime(0)
+  seller         User       @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  user_id        String
+  sale_items     SaleItem[]
+}
+
+model SaleItem {
+  sale_item_id    String    @id @default(uuid())
+  sale_item_price Int       @db.Int
+  sale_item_qty   Int       @db.Int
+  created_at      DateTime? @default(now()) @db.DateTime(0)
+  updated_at      DateTime? @default(now()) @db.DateTime(0)
+  sale            Sale      @relation(fields: [sale_id], references: [sale_id], onDelete: Cascade)
+  sale_id         String
+}
