@@ -1,15 +1,12 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client';
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
+import router from "../lib/router";
 
-// Clear the existing HTML content
-//
-// // Render your React component instead
+// Render your React component instead
 const root = createRoot(document.querySelector("#root"));
 root.render(
-  <React.StrictMode>
-    <h1>
-      Hello, world!
-    </h1>
-  </React.StrictMode>
+    <React.StrictMode>
+        <RouterProvider router={router} />
+    </React.StrictMode>
 );
-
